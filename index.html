@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Detajet e Modelit</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <meta name="description" content="Scano kodin QR ne showroom per model." />
+  <style>
+    @media print {
+      .no-print { display: none !important; }
+      .qr-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .qr-card { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-900">
+  <header class="sticky top-0 z-10 bg-white/80 backdrop-blur border-b border-slate-200">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center gap-3">
+      <a href="#" onclick="renderIndex()" class="text-xl font-semibold">Modelet e Motocikletave</a>
+      <span class="ml-auto text-xs text-slate-500">Demo</span>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 py-8" id="app"></main>
+
+  <footer class="max-w-6xl mx-auto px-4 py-8 text-sm text-slate-500">
+    <p>© <span id="year"></span> Moto Tirana shpk. All rights reserved.</p>
+  </footer>
+
+  <script>
+    const UTM = "?utm_source=qr_showroom&utm_medium=sticker&utm_campaign=motors";
+    const MODELS = [
+      {slug:"yamaha-mt07",name:"Yamaha MT‑07",hero:"mt7.jpg",engine:"689cc parallel twin",power:"73.4 hp",torque:"67 Nm",weight:"184 kg",seat:"805 mm",fuel:"14 L",price:"€8,599",description:"MT-07 ka qenë ndër motoçikletat më të shitura në Evropë që nga lançimi i saj, dhe për një arsye të mirë. Ajo ofron një nga përvojat më të pastra dhe më emocionuese të ngasjes, të frymëzuara nga nënkulturat e ngasjes që gjenden në rrugët urbane të Japonisë. E famshme për peshën e lehtë, manovrimin e shkathët dhe motorin CP2 me çift rrotullues, MT-07 tani është më e fuqishme se kurrë. Ky evolucion i fundit paraqet stil të ri, përditësime të shasisë dhe teknologji për të përmirësuar më tej përvojën e ngasjes, ndërkohë që nuk zvogëlon atë që e ka bërë MT-07 një nga motoçikletat më të rëndësishme të dekadës së fundit: argëtimin që të bën të buzëqeshësh."},
+      {slug:"yamaha-mt09",name:"Yamaha MT‑09",hero:"mt09.jpg",engine:"bla bla",power:"bla bla",torque:"bla bla",weight:"bla bla",seat:"bla bla",fuel:"bla bla",price:"bla bla",description:"bla bla bla bla bla bla"},
+      {slug:"yamaha-tmax",name:"Yamaha TMAX",hero:"tmax560.webp",engine:"bla bla",power:"bla bla",torque:"bla bla",weight:"bla bla",seat:"bla bla",fuel:"bla bla",price:"bla bla",description:"bla bla bla bla bla bla"},
+      {slug:"yamaha-nmax",name:"Yamaha NMAX",hero:"nmax.webp",engine:"bla bla",power:"bla bla",torque:"bla bla",weight:"bla bla",seat:"bla bla",fuel:"bla bla",price:"bla bla",description:"bla bla bla bla bla bla"},
+      {slug:"honda-cbr650r",name:"Sym Symphony 125",hero:"ss125.jpg",engine:"bla bla",power:"bla bla",torque:"bla bla",weight:"bla bla",seat:"bla bla",fuel:"bla bla",price:"bla bla",description:"bla bla bla bla bla bla"}
+    ];
+
+    const $ = s => document.querySelector(s);
+    const h = (t,c="",html="") => {const e=document.createElement(t);if(c)e.className=c;if(html)e.innerHTML=html;return e;};
+    const bySlug = s => MODELS.find(m => m.slug===s);
+    const modelUrl = s => `#${s}`;
+    const absoluteQrUrl = s => `${location.origin + location.pathname}${UTM}#${s}`;
+
+    function specRow(label, value){
+      return `<div class='flex'><div class='w-32 text-slate-500'>${label}</div><div class='flex-1 font-medium'>${value}</div></div>`;
+    }
+
+
+    function renderIndex(){
+      history.replaceState({},"","#");
+      const app=$("#app"); app.innerHTML="";
+
+      const head=h("div","flex items-center justify-between mb-6");
+      head.append(
+        h("h1","text-2xl sm:text-3xl font-bold","Te gjitha modelet"),
+        h("div","flex items-center gap-3",`
+          <a href="#qr" class="no-print inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-300 hover:bg-slate-100 text-sm"><span></span><span>QR Sheet</span></a>
+        `)
+      );
+      app.append(head);
+
+      const grid=h("div","grid sm:grid-cols-2 lg:grid-cols-3 gap-6");
+      MODELS.forEach(m=>{
+        const card=h("article","bg-white rounded-2xl shadow-sm overflow-hidden border border-slate-200 flex flex-col");
+        card.innerHTML=`<img class='h-40 w-full object-cover' src='${m.hero}' alt='${m.name}'>
+        <div class='p-4 flex flex-col gap-3 flex-1'>
+          <h2 class='text-lg font-semibold'>${m.name}</h2>
+          <p class='text-sm text-slate-600 line-clamp-3'>${m.description.length > 150 ? m.description.substring(0, 150) + '...' : m.description} <a href='${modelUrl(m.slug)}' class='text-slate-900 font-medium'>Shih me shume...</a></p>
+          <ul class='text-sm text-slate-700 space-y-1'>
+            <li><b>Engine:</b> ${m.engine}</li>
+            <li><b>Power:</b> ${m.power}</li>
+            <li><b>Torque:</b> ${m.torque}</li>
+            <li><b>Weight:</b> ${m.weight}</li>
+            <li><b>Seat:</b> ${m.seat}</li>
+            <li><b>Fuel:</b> ${m.fuel}</li>
+            <li><b>Price:</b> ${m.price}</li>
+          </ul>
+        </div>
+        <div class='p-4 pt-0 mt-auto'>
+          <a href='${modelUrl(m.slug)}' class='inline-flex items-center justify-center px-3 py-2 rounded-lg bg-slate-900 text-white text-sm hover:bg-black'>Shih detajet</a>
+        </div>`;
+        grid.append(card);
+      });
+      app.append(grid);
+    }
+
+    function renderDetail(slug){
+      history.replaceState({},"",`#${slug}`);
+      const m=bySlug(slug);
+      const app=$("#app");
+      if(!m){ app.innerHTML = `<a href="#" class="text-sm">← Back</a><p class='text-red-600 mt-3'>Model not found.</p>`; return; }
+
+      app.innerHTML="";
+      const back = h("a","inline-flex items-center gap-2 text-sm text-slate-700 hover:text-black mb-4","← The gjitha modelet");
+      back.href = "#";
+      app.append(back);
+
+      const wrap = h("section","bg-white rounded-2xl shadow-sm overflow-hidden border border-slate-200");
+
+      const media = h("div","h-64 md:h-80 w-full overflow-hidden");
+      media.append(Object.assign(document.createElement("img"), { src:m.hero, alt:m.name, className:"w-full h-full object-cover" }));
+
+      const content = h("div","p-6 grid md:grid-cols-5 gap-6");
+      const left = h("div","md:col-span-3 flex flex-col gap-3");
+      left.append(
+        h("h1","text-2xl md:text-3xl font-bold",m.name),
+        h("p","text-slate-600",m.description),
+        h("div","mt-2 space-y-2 text-sm",`
+          ${specRow("Engine", m.engine)}
+          ${specRow("Power", m.power)}
+          ${specRow("Torque", m.torque)}
+          ${specRow("Weight", m.weight)}
+          ${specRow("Seat", m.seat)}
+          ${specRow("Fuel", m.fuel)}
+          ${specRow("Price", m.price)}
+        `)
+      );
+
+      const right = h("div","md:col-span-2");
+      const card = h("div","border border-slate-200 rounded-xl p-4 flex flex-col gap-3");
+      card.append(
+        h("div","text-sm text-slate-500","Scano kodin QR për të parë specifikimet e modelit"),
+        h("div","flex justify-center",`<div id="qrDetail"></div>`),
+        h("input","w-full border rounded-lg px-3 py-2 text-sm","")
+      );
+      const urlInput = card.querySelector("input");
+      const fullUrl = absoluteQrUrl(m.slug);
+      urlInput.value = fullUrl;
+      right.append(card);
+      content.append(left,right);
+
+      wrap.append(media, content);
+      app.append(wrap);
+
+      new QRCode(document.getElementById("qrDetail"), {text: fullUrl, width: 168, height: 168, correctLevel: QRCode.CorrectLevel.H});
+    }
+
+    function renderQrSheet(){
+      history.replaceState({},"","#qr");
+      const app=$("#app"); app.innerHTML="";
+
+      const head=h("div","flex items-center justify-between mb-6");
+      head.append(
+        h("h1","text-2xl sm:text-3xl font-bold","QR Codes — All Models"),
+        h("div","no-print flex items-center gap-3",`
+          <a href="#" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-300 hover:bg-slate-100 text-sm">← Back</a>
+          <button onclick="window.print()" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-900 text-white text-sm hover:bg-black">🖨️ Print</button>
+        `)
+      );
+      app.append(head);
+
+      const grid=h("div","qr-grid grid grid-cols-2 md:grid-cols-3 gap-6");
+      MODELS.forEach(m=>{
+        const card=h("div","qr-card bg-white rounded-2xl shadow-sm border border-slate-200 p-4 flex flex-col gap-3");
+        card.append(
+          h("h3","font-semibold",m.name),
+          h("div","flex justify-center",`<div id="qr-${m.slug}"></div>`),
+          h("div","text-xs text-slate-500 break-all",absoluteQrUrl(m.slug))
+        );
+        grid.append(card);
+      });
+      app.append(grid);
+
+      MODELS.forEach(m=>{
+        new QRCode(document.getElementById(`qr-${m.slug}`), {text: absoluteQrUrl(m.slug), width: 192, height: 192, correctLevel: QRCode.CorrectLevel.H});
+      });
+    }
+
+    function route(){
+      const hash = location.hash || "#";
+      if (hash === "#" || hash === "") { renderIndex(); return; }
+      if (hash === "#qr") { renderQrSheet(); return; }
+      const slug = hash.replace(/^#\/?/, "");
+      renderDetail(slug);
+    }
+
+    window.addEventListener('hashchange', route);
+    document.getElementById("year").textContent=new Date().getFullYear();
+
+    route();
+  </script>
+</body>
+</html>
