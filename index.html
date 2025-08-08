@@ -58,7 +58,7 @@
       head.append(
         h("h1","text-2xl sm:text-3xl font-bold","Te gjitha modelet"),
         h("div","flex items-center gap-3",`
-          <a href="#qr" class="no-print inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-300 hover:bg-slate-100 text-sm"><span></span><span>QR Sheet</span></a>
+          <a href="#qr" class="no-print inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-300 hover:bg-slate-100 text-sm"><span></span><span>Kodet QR</span></a>
         `)
       );
       app.append(head);
@@ -145,10 +145,10 @@
 
       const head=h("div","flex items-center justify-between mb-6");
       head.append(
-        h("h1","text-2xl sm:text-3xl font-bold","QR Codes — All Models"),
+        h("h1","text-2xl sm:text-3xl font-bold","Kodi QR — Te gjitha modelet"),
         h("div","no-print flex items-center gap-3",`
           <a href="#" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-300 hover:bg-slate-100 text-sm">← Back</a>
-          <button onclick="window.print()" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-900 text-white text-sm hover:bg-black">🖨️ Print</button>
+          <button onclick="window.print()" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-900 text-white text-sm hover:bg-black">Print</button>
         `)
       );
       app.append(head);
